@@ -1,13 +1,11 @@
 <script>
+  import { link } from 'svelte-spa-router';
+
   import { userUuid } from "../stores/stores.js";
 
   const fetchCourses = async () => {
         const response = await fetch(`api/courses`);
         return await response.json();
-  };
-
-  const goToForum = async (courseId, userUuid) => {
-
   };
 
   let coursesPromise = fetchCourses();
@@ -44,8 +42,9 @@
               <!-- 假设课程对象有一个名为 name 的属性 -->
               <h2 class="font-bold">{course.course_name}</h2>
               <!-- 如果需要，可以添加更多课程信息 -->
+              <a class="text-black-500 hover:underline" use:link={`/courses/${course.id}/questions`}>Go to Q&A Forum</a>
           </li>
-          <button 
+          <!-- <button 
             class="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             on:click={() => {
                 const targetUrl = `/qa?courseId=${course.id}&userUuid=${$userUuid}`;
@@ -53,7 +52,7 @@
                 window.location.href = targetUrl;
             }}>
             Go to Q&A Forum
-          </button>
+          </button> -->
       {/each}
     </ul>
 {/await}
