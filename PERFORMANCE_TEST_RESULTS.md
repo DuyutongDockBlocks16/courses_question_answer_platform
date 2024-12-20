@@ -1,0 +1,1 @@
+TODO: There are at least five (meaningful) performance tests written with k6, included in the k6 folder. Performance test results are included in the PERFORMANCE_TEST_RESULTS.md that is included in the assignment template.

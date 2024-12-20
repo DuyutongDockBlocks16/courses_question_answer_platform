@@ -1,0 +1,39 @@
+vim $HOME/.docker/config.json
+
+
+test-1:
+curl -X GET http://localhost:7800/api/courses -H "Content-Type: application/json"
+
+curl -X POST http://localhost:7800/api/courses/1/questions \
+     -H "Content-Type: application/json" \
+     -d '{"question_title": "How does this course work?"}'
+
+curl -X GET http://localhost:7800/api/courses/1 -H "Content-Type: application/json"
+
+
+test-2+3+4:
+curl -X GET http://localhost:7800/api/courses -H "Content-Type: application/json"
+
+curl -X POST http://localhost:7800/api/courses/1/questions \
+     -H "Content-Type: application/json" \
+     -d '{"question_title": "How does this course work?"}'
+
+curl -X POST http://localhost:7800/api/courses/1 \
+     -H "Content-Type: application/json" \
+     -d '{"user": "uuid_12312451236234"}'
+
+curl -X POST http://localhost:7800/api/questions/1/answers \
+     -H "Content-Type: application/json" \
+     -d '{"answer_content": "It just works!"}'
+
+curl -X POST http://localhost:7800/api/questions/1 \
+     -H "Content-Type: application/json" \
+     -d '{"user": "uuid_12312451236234"}'
+
+curl -X POST http://localhost:7800/api/questions/1/votes \
+     -H "Content-Type: application/json" \
+     -d '{"user": "uuid_12312451236234"}'
+
+curl -X POST http://localhost:7800/api/answers/1/votes \
+     -H "Content-Type: application/json" \
+     -d '{"user": "uuid_12312451236234"}'
