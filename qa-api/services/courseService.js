@@ -7,4 +7,13 @@ const getCourses = async () => {
   return res;
 };
 
-export { getCourses };
+const getCourseNameById = async (course_id) => {
+
+  const res = await sql`SELECT course_name FROM courses WHERE id = ${course_id} ;`
+
+
+  return res[0];
+};
+
+
+export { getCourses, getCourseNameById };

@@ -1,10 +1,8 @@
 ---
 import Layout from "../layout/Layout.astro";
-import Courses from "../components/courses.svelte";
+import App from "../components/App.svelte";
 ---
 
 <Layout>
-  <Courses client:only={"svelte"} />
+  <App client:only={"svelte"} />
 </Layout>
-
-

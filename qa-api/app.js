@@ -5,7 +5,7 @@ import * as answerService from "./services/answerService.js";
 import { cacheMethodCalls } from "./utils/cacheUtil.js";
 
 const cachedCourseService = cacheMethodCalls(
-  courseService,
+  courseService, 
   [],
 );
 
@@ -20,7 +20,13 @@ const cachedAnswerService = cacheMethodCalls(
 );
 
 const getAllCourses = async (request, urlPatternResult) => {
-  return Response.json(await cachedApiServices.getCourses())
+  return Response.json(await cachedCourseService.getCourses())
+};
+
+const getCourseName = async (request, urlPatternResult) => {
+  const courseId = urlPatternResult.pathname.groups.courseId;
+
+  return Response.json(await cachedCourseService.getCourseNameById(courseId))
 };
 
 const postQuestion = async (request, urlPatternResult) => {
@@ -65,7 +71,7 @@ const getAnswers = async (request, urlPatternResult) => {
   return Response.json(await cachedAnswerService.getAnswersByQuestionId(questionId, user))
 };
 
-const postQuestionVote = async (request, urlPatternResult) => {
+const putQuestionVote = async (request, urlPatternResult) => {
   const questionId = urlPatternResult.pathname.groups.questionId;
   const requestData = await request.json();
   const user = requestData.user;
@@ -78,7 +84,7 @@ const postQuestionVote = async (request, urlPatternResult) => {
   });
 };
 
-const postAnswerVote = async (request, urlPatternResult) => {
+const putAnswerVote = async (request, urlPatternResult) => {
   const answerId = urlPatternResult.pathname.groups.answerId;
   const requestData = await request.json();
   const user = requestData.user;
@@ -96,6 +102,11 @@ const urlMapping = [
     method: "GET",
     pattern: new URLPattern({ pathname: "/courses" }),
     fn: getAllCourses,
+  },
+  {
+    method: "GET",
+    pattern: new URLPattern({ pathname: "/courseName/:courseId" }),
+    fn: getCourseName,
   },
   {
     method: "POST",
@@ -118,14 +129,14 @@ const urlMapping = [
     fn: postAnswer,
   },
   {
-    method: "POST",
+    method: "PUT",
     pattern: new URLPattern({ pathname: "/questions/:questionId/votes" }),
-    fn: postQuestionVote,
+    fn: putQuestionVote,
   },
   {
-    method: "POST",
+    method: "PUT",
     pattern: new URLPattern({ pathname: "/answers/:answerId/votes" }),
-    fn: postAnswerVote,
+    fn: putAnswerVote,
   },
 
 ];

@@ -42,7 +42,8 @@
               <!-- 假设课程对象有一个名为 name 的属性 -->
               <h2 class="font-bold">{course.course_name}</h2>
               <!-- 如果需要，可以添加更多课程信息 -->
-              <a class="text-black-500 hover:underline" use:link={`/courses/${course.id}/questions`}>Go to Q&A Forum</a>
+              <a class="text-blue-500 hover:underline" use:link={`/courses/${course.id}/questions`}>Go to Q&A Forum</a>
+              <a> </a>
           </li>
           <!-- <button 
             class="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
