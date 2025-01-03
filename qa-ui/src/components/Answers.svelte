@@ -18,15 +18,17 @@
     let Answers = [];
 
     const getAnswers = async () => {
-        const response = await fetch(`/api/courses/${params.courseId}`,{
+        const response = await fetch(`/api/questions/${params.questionId}`,{
             method: "POST",
             body: JSON.stringify({ user: $userUuid }),
         });
 
-        questions = await response.json();
+        Answers = await response.json();
 
-        return questions;
+        return Answers;
     };
+
+    let answersPromise = getAnswers();
 
     const getCourseName = async () =>{
         const response = await fetch(`/api/courseName/${params.courseId}`)
@@ -53,17 +55,17 @@
     let answerContent = "";
 
     const addAnswer = async () => {
-        if (questionTitle.length == 0) {
+        if (answerContent.length == 0) {
             return;
         }
 
-        const question = {
-            question_title: questionTitle
+        const answer = {
+            answer_content: answerContent
         };
 
-        const response = await fetch(`/api/courses/${params.courseId}/questions`, {
+        const response = await fetch(`/api/questions/${params.questionId}/answers`, {
             method: "POST",
-            body: JSON.stringify(question),
+            body: JSON.stringify(answer),
         });
 
         answersPromise = getAnswers();
@@ -111,18 +113,18 @@
     };
 
     // upvote
-    const toggleUpvote = async (question_id) => {
+    const toggleUpvote = async (answer_id) => {
 
         // update question votes
-        await fetch(`/api/questions/${question_id}/votes`, {
+        await fetch(`/api/answers/${answer_id}/votes`, {
             method: "PUT",
             body: JSON.stringify({ user: $userUuid }),
         });
 
-        questionsPromise = getAnswers();
+        answersPromise = getAnswers();
 
         // notify success
-        messageSuccess = "You voted the question successfully!";
+        messageSuccess = "You voted the answer successfully!";
         setTimeout(() => {
             messageSuccess = null;
         }, 5000);
@@ -168,6 +170,24 @@
     {/if}
 {/await}
 
+{#await courseNamePromise}
+    <div class="text-gray-700">Loading course name...</div>
+{:then courseName}
+    {#if courseName == null || courseName.length == 0}
+        <h1 class="text-red-500">Error course name</h1>
+    {:else}
+        <p class="text-gray-700 text-xs mb-4">
+            <span class="font-medium text-gray-500">The question belongs to</span> 
+            <a 
+                href={`/courses/${params.courseId}/questions`} use:link
+                class="text-orange-600 font-semibold hover:underline"
+            >
+                {courseName.course_name}
+            </a>
+        </p>
+    {/if}
+{/await}
+
 <!-- <div class="create">
     <input 
         type="text" 
@@ -197,48 +217,40 @@
 </GradientButton>
 
 
-<!-- <div class="bg-gray-100 p-6 rounded-lg">
-    {#await questionsPromise}
-        <div class="text-gray-700">Loading questions...</div>
-    {:then questions}
-        {#if questions == null || questions.length == 0}
-            <div class="text-red-500">No questions available</div>
+<div class="bg-gray-100 p-6 rounded-lg">
+    {#await answersPromise}
+        <div class="text-gray-700">Loading answers...</div>
+    {:then answers}
+        {#if answers == null || answers.length == 0}
+            <div class="text-red-500">No answer here now...</div>
         {:else}
             <h1 class="text-black-500 text-2xl font-medium mb-4">
-                Questions in this Forum
+                Avaliable answers
             </h1>
-            <p class="text-gray-600 text-base mb-6">
-                Browse the questions raised by fellow learners. Vote on helpful ones or add your own to join the discussion!
-            </p>
             <ul>
                 <Table hoverable={true}>
                     <TableHead>
-                      <TableHeadCell class="text-left">Question</TableHeadCell>
+                      <TableHeadCell class="text-left">Answer</TableHeadCell>
                       <TableHeadCell class="text-left">Likes</TableHeadCell>
                     </TableHead>
                     <TableBody tableBodyClass="divide-y w-full" style="width: 800px;">
-                      {#each questions as question}
+                      {#each answers as answer}
                         <TableBodyRow>
                           <TableBodyCell>
-                            <a 
-                            href={`/courses/${course.id}/questions/${question.id}/answers`} 
-                            class="inline-flex items-center text-orange-500 hover:underline"
-                            >
-                                {question.question_title}
-                            </a>
+                            {answer.answer_content}
                           </TableBodyCell>
                           <TableBodyCell class="text-left">
-                            {#if !question.voted}
+                            {#if !answer.voted}
                                 <button
                                 class="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 flex items-center"
-                                on:click={() => toggleUpvote(question.id)}
+                                on:click={() => toggleUpvote(answer.id)}
                                 >
                                 <img
                                     src="like.svg"
                                     alt="Like"
                                     class="w-5 h-5 mr-2"
                                 />
-                                {question.vote_count}
+                                {answer.vote_count}
                                 </button>
                             {:else}
                                 <div class="text-orange-500 flex items-center">
@@ -247,7 +259,7 @@
                                     alt="Liked"
                                     class="w-5 h-5 mr-2"
                                 />
-                                {question.vote_count}
+                                {answer.vote_count}
                                 </div>
                             {/if}
                           </TableBodyCell>
@@ -258,7 +270,7 @@
             </ul>
         {/if}
     {/await}
-</div> -->
+</div>
 
 
 
