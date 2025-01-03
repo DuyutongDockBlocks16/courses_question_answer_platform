@@ -53,7 +53,10 @@ const getQuestions = async (request, urlPatternResult) => {
 const getQuestionInfo = async (request, urlPatternResult) => {
   const questionId = urlPatternResult.pathname.groups.questionId;
 
-  return Response.json(await cachedQuestionService.getQuestionsInfoById(questionId))
+  const res = await cachedQuestionService.getQuestionsInfoById(questionId);
+  console.log("getQuestionInfo res", res);
+
+  return Response.json(res)
 };
 
 const postAnswer = async (request, urlPatternResult) => {
