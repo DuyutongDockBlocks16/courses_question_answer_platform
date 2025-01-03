@@ -3,6 +3,9 @@
 
   import { userUuid } from "../stores/stores.js";
 
+  import { Card } from 'flowbite-svelte';
+  import { UsersGroupSolid, ArrowUpRightFromSquareOutline } from 'flowbite-svelte-icons';
+
   const fetchCourses = async () => {
         const response = await fetch(`api/courses`);
         return await response.json();
@@ -38,13 +41,24 @@
 {:then courses}
     <ul>
       {#each courses as course}
-          <li>
-              <!-- 假设课程对象有一个名为 name 的属性 -->
-              <h2 class="font-bold">{course.course_name}</h2>
-              <!-- 如果需要，可以添加更多课程信息 -->
-              <a class="text-blue-500 hover:underline" use:link={`/courses/${course.id}/questions`}>Go to Q&A Forum</a>
-              <a> </a>
-          </li>
+        <li class="block w-1/3"> <!-- 设置宽度以便在一行中显示多个元素 -->
+          <Card class="flex flex-col space-y-4 mb-4">
+            <UsersGroupSolid class="w-8 h-8 text-gray-500 dark:text-gray-400" />
+            <a href="/" use:link={`/courses/${course.id}/questions`}>
+              <h5 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                {course.course_name}
+              </h5>
+            </a>
+            <p class="font-normal text-gray-500 dark:text-gray-400">
+              If you have any questions about this course, please discuss it with us:
+            </p>
+            <a href="/" class="inline-flex items-center text-orange-500 hover:underline" use:link={`/courses/${course.id}/questions`}>
+              Go to Q&A Forum
+              <ArrowUpRightFromSquareOutline class="w-4 h-4 ms-2.5" />
+            </a>
+          </Card>
+        </li>
+      
           <!-- <button 
             class="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             on:click={() => {
