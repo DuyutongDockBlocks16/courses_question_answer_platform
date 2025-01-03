@@ -50,6 +50,12 @@ const getQuestions = async (request, urlPatternResult) => {
   return Response.json(await cachedQuestionService.getQuestionsByCourseId(courseId, user))
 };
 
+const getQuestionInfo = async (request, urlPatternResult) => {
+  const questionId = urlPatternResult.pathname.groups.questionId;
+
+  return Response.json(await cachedQuestionService.getQuestionsInfoById(questionId))
+};
+
 const postAnswer = async (request, urlPatternResult) => {
   const requestData = await request.json();
   
@@ -122,6 +128,11 @@ const urlMapping = [
     method: "POST",
     pattern: new URLPattern({ pathname: "/questions/:questionId" }),
     fn: getAnswers,
+  },
+  {
+    method: "GET",
+    pattern: new URLPattern({ pathname: "/questions/:questionId" }),
+    fn: getQuestionInfo,
   },
   {
     method: "POST",

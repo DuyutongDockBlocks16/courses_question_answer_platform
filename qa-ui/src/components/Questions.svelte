@@ -79,7 +79,7 @@
         // conquestionTitletent = "";
 
         // notify success
-        messageSuccess = "You created a question successfully!";
+        // messageSuccess = "You created a question successfully!";
         // setTimeout(() => {
         //     messageSuccess = null;
         // }, 5000);
@@ -136,7 +136,7 @@
     {:else}
         <Breadcrumb class="breadcrumb" aria-label="Solid background breadcrumb example" solid>
             <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
-            <BreadcrumbItem>Course Forum </BreadcrumbItem>
+            <BreadcrumbItem>Course Forum</BreadcrumbItem>
         </Breadcrumb>
 
         <h1 class="text-black-500 text-xl font-medium mb-4">
@@ -205,7 +205,14 @@
                     <TableBody tableBodyClass="divide-y w-full" style="width: 800px;">
                       {#each questions as question}
                         <TableBodyRow>
-                          <TableBodyCell>{question.question_title}</TableBodyCell>
+                          <TableBodyCell>
+                            <a 
+                                href="/" use:link={`/courses/${params.courseId}/questions/${question.id}/answers`}
+                                class="inline-flex items-center text-orange-500 hover:underline"
+                            >
+                                {question.question_title}
+                            </a>
+                          </TableBodyCell>
                           <!-- <TableBodyCell class="text-left">
                             <span class="text-gray-500">{question.vote_count}</span>
                           </TableBodyCell> -->

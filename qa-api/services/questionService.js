@@ -7,6 +7,25 @@ const insertQuestion = async (course_id, question_title) => {
   
     return res[0].id;
 };
+
+const getQuestionsInfoById = async (questionId) => {
+
+    const res = await sql
+    `
+    SELECT
+        question_title,
+        vote_count,
+        created_at,
+        updated_at
+    FROM
+    questions
+    WHERE 
+    id = ${questionId} 
+    `
+    
+    console.log("getQuestionsInfoById res", res);
+    return res[0];
+};
   
   
 const getQuestionsByCourseId = async (course_id, user_uuid) => {
@@ -60,4 +79,4 @@ const voteQuestionByQuestionId = async (question_id, user_uuid) => {
     return { vote_count, upvote_id };
 };
 
-export {  insertQuestion , getQuestionsByCourseId  , voteQuestionByQuestionId };
+export { insertQuestion, getQuestionsInfoById,  getQuestionsByCourseId, voteQuestionByQuestionId };
