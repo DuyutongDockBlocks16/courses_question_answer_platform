@@ -5,6 +5,14 @@
     import { Button, GradientButton } from 'flowbite-svelte';
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
     import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
+    import { Alert } from 'flowbite-svelte';
+    import { InfoCircleSolid } from 'flowbite-svelte-icons';
+
+    let showSuccessAlert = false;
+    let showErrorAlert = false;
+    let errorMessage = null;
+    let successMessage = null;
+    let courseNameForLLM = "";
 
     import { Textarea } from 'flowbite-svelte';
     let textareaprops = {
@@ -21,6 +29,7 @@
         const response = await fetch(`/api/courseName/${params.courseId}`)
 
         let courseName = await response.json();
+        courseNameForLLM = courseName.course_name
 
         return courseName;
     }
@@ -43,6 +52,11 @@
     let questionTitle = "";
 
     const addQuestion = async () => {
+        
+        if (!questionTitle.trim()) {
+            return;
+        }
+        
         if (questionTitle.length == 0) {
             return;
         }
@@ -60,6 +74,19 @@
 
         // error
         if (!response.ok) {
+            if (response.status === 429) {
+                const errorData = await response.json();
+                errorMessage = errorData.error || "Too many requests. Please try again later.";
+            } else {
+                errorMessage = "An error occurred. Please try again.";
+            }
+            showErrorAlert = true;
+            setTimeout(() => {
+                showErrorAlert = false; // 自动清除错误消息
+            }, 3000); // 5秒后隐藏错误
+            return;
+        }
+        // if (!response.ok) {
             // if (response.status === 429) {
             //     // < 1 min, too many requests
             //     const errorData = await response.json();
@@ -72,32 +99,36 @@
             //     messageError = null;
             // }, 5000);
             // console.log("error: < 1 min");
-            messageError = "An error occurred.";
-            return;
-        }
-
-        // conquestionTitletent = "";
+        //     messageError = "An error occurred.";
+        //     return;
+        // }
 
         // notify success
-        // messageSuccess = "You created a question successfully!";
-        // setTimeout(() => {
-        //     messageSuccess = null;
-        // }, 5000);
 
-        // generate 3 answers via llm
-        // const addedQuestionData = await response.json();
+        successMessage = 'Thank you! You created a new question!';
+        showSuccessAlert = true;
 
-        // await fetch("/api/llm-api", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //         question_id: addedQuestionData.id,
-        //         question: addedQuestionData.content,
-        //         user_uuid: "llm",
-        //     }),
-        // });
+        setTimeout(() => {
+            showSuccessAlert = false; // 自动隐藏
+        }, 3000);
+
+    // create 3 answers by llm
+        try {
+            const newQuestionData = await response.json();
+            await fetch("/api/llm-api", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    course_name: courseNameForLLM,
+                    question_id: newQuestionData.questionId,
+                    question_title: questionTitle
+                }),
+            });
+        } catch (error) {
+            console.error("Failed to generate answers via LLM:", error);
+        }
     };
 
     // upvote
@@ -127,6 +158,21 @@
         Back to home page
     </a>
 </nav> -->
+  
+<!-- Alert 组件 -->
+{#if showSuccessAlert}
+<Alert color="green" class="fade {showSuccessAlert ? '' : 'out'}">
+    <InfoCircleSolid slot="icon" class="w-5 h-5" />
+    <span class="font-medium">{successMessage}</span>
+</Alert>
+{/if}
+
+{#if showErrorAlert}
+<Alert>
+    <InfoCircleSolid slot="icon" class="w-5 h-5" />
+    <span class="font-medium">{errorMessage}</span>
+</Alert>
+{/if}
 
 {#await courseNamePromise}
     <div class="text-gray-700">Loading course name...</div>
@@ -286,5 +332,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+    .fade {
+      transition: opacity 0.3s ease;
+    }
+    .fade.out {
+      opacity: 0;
     }
 </style>
