@@ -115,7 +115,7 @@
     // create 3 answers by llm
         try {
             const newQuestionData = await response.json();
-            await fetch("/api/llm-api", {
+            fetch("/api/llm-api", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

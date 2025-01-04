@@ -42,12 +42,12 @@ services:
     depends_on:
       - qa-api
 
-  # llm-api:
-  #   build: llm-api
-  #   image: llm-api
-  #   restart: "no"
-  #   expose:
-  #     - 7000
+  llm-api:
+    build: llm-api
+    image: llm-api
+    restart: "no"
+    expose:
+      - 7000
 
   database:
     container_name: database-server-dab-p2-ffeb713a-b7eb-49df-a5ae-4877ceec8fdc
