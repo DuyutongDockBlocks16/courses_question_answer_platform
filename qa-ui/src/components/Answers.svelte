@@ -257,45 +257,7 @@
                     </Card>
                 {/each}
 
-                <!-- <Table hoverable={true}>
-                    <TableHead>
-                      <TableHeadCell class="text-left">Answer</TableHeadCell>
-                      <TableHeadCell class="text-left">Likes</TableHeadCell>
-                    </TableHead>
-                    <TableBody tableBodyClass="divide-y w-full" style="width: 800px;">
-                      {#each answers as answer}
-                        <TableBodyRow>
-                          <TableBodyCell class="custom-cell">
-                            {answer.answer_content}
-                          </TableBodyCell>
-                          <TableBodyCell class="text-left">
-                            {#if !answer.voted}
-                                <button
-                                class="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 flex items-center"
-                                on:click={() => toggleUpvote(answer.id)}
-                                >
-                                <img
-                                    src="like.svg"
-                                    alt="Like"
-                                    class="w-5 h-5 mr-2"
-                                />
-                                {answer.vote_count}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                </button>
-                            {:else}
-                                <div class="text-orange-500 flex items-center">
-                                <img
-                                    src="liked.svg"
-                                    alt="Liked"
-                                    class="w-5 h-5 mr-2"
-                                />
-                                {answer.vote_count}
-                                </div>
-                            {/if}
-                          </TableBodyCell>
-                        </TableBodyRow>
-                      {/each}
-                    </TableBody>
-                </Table> -->
+                
             </ul>
         {/if}
     {/await}
