@@ -35,4 +35,6 @@ async def ask_question(request: Request):
 
     print(f"answer: {answer}")
 
+    return answer
+
     # return generator(final_question)

@@ -13,6 +13,10 @@
     let errorMessage = null;
     let successMessage = null;
     let courseNameForLLM = "";
+    let page = 0;
+    let load_size = 20;
+    let displayedQuestions = [];
+    let questions = [];
 
     import { Textarea } from 'flowbite-svelte';
     let textareaprops = {
@@ -22,8 +26,6 @@
         rows: 2,
         placeholder: 'Enter your question here...'
     };
-
-    let questions = [];
 
     const getCourseName = async () =>{
         const response = await fetch(`/api/courseName/${params.courseId}`)
@@ -43,6 +45,9 @@
         });
 
         questions = await response.json();
+
+        // page = 0;
+        // displayedQuestions = [...questions.slice(0, size)];
 
         return questions;
     };
@@ -152,12 +157,6 @@
 
 </script>
 
-<!-- <nav>
-    <a class="text-blue-500 hover:underline flex items-center" use:link={"/"}>
-        <img src="/BacktoHome.svg" alt="Back icon" class="w-4 h-4 mr-1">
-        Back to home page
-    </a>
-</nav> -->
   
 <!-- Alert 组件 -->
 {#if showSuccessAlert}
@@ -195,25 +194,9 @@
     {/if}
 {/await}
 
-<!-- <div class="create">
-    <input 
-        type="text" 
-        bind:value={questionTitle} 
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        placeholder="Enter your question here"
-    />
-    <button id="create-button" class="flex items-center px-4 py-2 bg-blue-500 text-white rounded ml-2" on:click={addQuestion}>
-        <img src="/add-question.svg" alt="Add icon" class="w-5 h-5 mr-2">
-        Add question
-    </button>
-</div> -->
 
 <Textarea {...textareaprops} bind:value={questionTitle} />
-<!-- <Button color="primary" pill>Blue</Button>
-<Button class="text-center font-medium inline-flex items-center justify-center px-5 py-2.5 text-sm text-white bg-green-500 hover:bg-green-600 rounded-full">
-    Green Button
-</Button>
-<GradientButton shadow color="blue" on:click={addQuestion}>Blue</GradientButton> -->
+
 <GradientButton 
     id="create-button" 
     shadow 
@@ -222,10 +205,6 @@
     <img src="/add-question.svg" alt="Add icon" class="w-5 h-5 mr-2">
     Submit question
 </GradientButton>
-<!-- <button id="create-button" class="flex items-center px-4 py-2 bg-blue-500 text-white rounded ml-2" on:click={addQuestion}>
-    <img src="/add-question.svg" alt="Add icon" class="w-5 h-5 mr-2">
-    Submit question
-</button> -->
 
 
 <div class="bg-gray-100 p-6 rounded-lg">
@@ -273,7 +252,7 @@
                                     alt="Like"
                                     class="w-5 h-5 mr-2"
                                 />
-                                {question.vote_count}
+                                {question.vote_count}&nbsp;&nbsp;&nbsp;
                                 </button>
                             {:else}
                                 <!-- 已点赞的图标 -->
@@ -298,28 +277,6 @@
                     </TableBody>
                 </Table>
                   
-                <!-- {#each questions as question}
-                    <li>
-                        <div class="item py-2">
-                            <div class="content">
-                                <a class="text-blue-600 hover:underline font-medium">
-                                    {question.question_title}
-                                </a>
-                            </div>
-                            <div class="vote flex items-center mt-2">
-                                <span class="text-gray-500 mr-4">
-                                    Votes: {question.vote_count}
-                                </span>
-                                <button
-                                    class="bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600"
-                                    on:click={() => upvote(question.id)}
-                                >
-                                    Upvote
-                                </button>
-                            </div>
-                        </div>
-                    </li>
-                {/each} -->
             </ul>
         {/if}
     {/await}

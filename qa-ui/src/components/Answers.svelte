@@ -250,7 +250,7 @@
                                     alt="Like"
                                     class="w-5 h-5 mr-2"
                                 />
-                                {answer.vote_count}
+                                {answer.vote_count}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
                             {:else}
                                 <div class="text-orange-500 flex items-center">
