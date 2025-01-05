@@ -8,6 +8,7 @@ CREATE TABLE questions (
     course_id INTEGER REFERENCES courses(id),
     question_title TEXT NOT NULL,
     vote_count INTEGER DEFAULT 0,
+    user_uuid TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -17,6 +18,7 @@ CREATE TABLE answers (
     question_id INTEGER REFERENCES questions(id),
     answer_content TEXT NOT NULL,
     vote_count INTEGER DEFAULT 0,
+    user_uuid TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -37,6 +39,8 @@ CREATE TABLE answer_upvote (
 
 CREATE INDEX questions_course_id_idx ON questions (course_id);
 CREATE INDEX answers_question_id_idx ON answers (question_id);
+CREATE INDEX questions_user_uuid_idx ON questions (user_uuid);
+CREATE INDEX answers_user_uuid_idx ON answers (user_uuid);
 
 CREATE INDEX qu_user_uuid_idx ON question_upvote (user_uuid);
 CREATE INDEX qu_question_id_idx ON question_upvote (question_id);

@@ -31,7 +31,7 @@ async def ask_question(request: Request):
 
     print(f"final_question: {final_question}")
 
-    answer = generator(final_question)
+    answer = generator(final_question)[0]["generated_text"][len(final_question):].strip()
 
     print(f"answer: {answer}")
 

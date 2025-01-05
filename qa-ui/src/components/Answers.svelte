@@ -7,6 +7,7 @@
     import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
     import { Alert } from 'flowbite-svelte';
     import { InfoCircleSolid } from 'flowbite-svelte-icons';
+    import { Card } from 'flowbite-svelte';
 
     import { Textarea } from 'flowbite-svelte';
     let textareaprops = {
@@ -226,7 +227,37 @@
                 Avaliable answers
             </h1>
             <ul>
-                <Table hoverable={true}>
+                {#each answers as answer}
+                    <Card class="text-center w-240 max-w-full" size="lg" padding="xl">
+                        <p class="mb-5 text-base text-dark-500 sm:text-lg dark:text-white-400">{answer.answer_content}</p>
+                        <div class="justify-center items-center space-y-4 sm:flex sm:space-y-0 sm:space-x-4 rtl:space-x-reverse">
+                            {#if !answer.voted}
+                            <button
+                            class="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 flex items-center"
+                            on:click={() => toggleUpvote(answer.id)}
+                            >
+                            <img
+                                src="like.svg"
+                                alt="Like"
+                                class="w-5 h-5 mr-2"
+                            />
+                            {answer.vote_count}
+                            </button>
+                            {:else}
+                                <div class="text-orange-500 flex items-center">
+                                <img
+                                    src="liked.svg"
+                                    alt="Liked"
+                                    class="w-5 h-5 mr-2"
+                                />
+                                {answer.vote_count}
+                                </div>
+                            {/if}
+                        </div>
+                    </Card>
+                {/each}
+
+                <!-- <Table hoverable={true}>
                     <TableHead>
                       <TableHeadCell class="text-left">Answer</TableHeadCell>
                       <TableHeadCell class="text-left">Likes</TableHeadCell>
@@ -234,7 +265,7 @@
                     <TableBody tableBodyClass="divide-y w-full" style="width: 800px;">
                       {#each answers as answer}
                         <TableBodyRow>
-                          <TableBodyCell>
+                          <TableBodyCell class="custom-cell">
                             {answer.answer_content}
                           </TableBodyCell>
                           <TableBodyCell class="text-left">
@@ -264,7 +295,7 @@
                         </TableBodyRow>
                       {/each}
                     </TableBody>
-                </Table>
+                </Table> -->
             </ul>
         {/if}
     {/await}
@@ -273,6 +304,14 @@
 
 
 <style>
+    .custom-cell {
+        word-wrap: break-word; /* 超出边界时断字 */
+        word-break: break-word; /* 兼容更多浏览器 */
+        max-width: 200px; /* 限制最大宽度 */
+        overflow-wrap: break-word; /* 超出边界换行 */
+        white-space: normal; /* 允许内容换行 */
+    }
+
     .breadcrumb {
         white-space: nowrap;
         overflow: hidden;
