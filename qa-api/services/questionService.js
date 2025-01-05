@@ -1,9 +1,9 @@
 import { sql } from "../database/database.js";
 
 
-const insertQuestion = async (course_id, question_title) => {
+const insertQuestion = async (course_id, question_title, user_uuid) => {
 
-    const res = await sql`INSERT INTO questions (course_id, question_title) VALUES (${course_id} , ${question_title}) RETURNING id`
+    const res = await sql`INSERT INTO questions (course_id, question_title, user_uuid) VALUES (${course_id} , ${question_title}, ${user_uuid}) RETURNING id`
   
     return res[0].id;
 };
@@ -79,4 +79,12 @@ const voteQuestionByQuestionId = async (question_id, user_uuid) => {
     return { vote_count, upvote_id };
 };
 
-export { insertQuestion, getQuestionsInfoById,  getQuestionsByCourseId, voteQuestionByQuestionId };
+const getLastPostTimeByUserId = async (user_uuid) => {
+    const res = await sql`SELECT created_at FROM questions WHERE user_uuid = ${user_uuid} ORDER BY created_at DESC LIMIT 1;`
+    if (res && res.length > 0){
+      return res[0].created_at;
+    }
+    return null;
+};
+
+export { insertQuestion, getQuestionsInfoById,  getQuestionsByCourseId, voteQuestionByQuestionId, getLastPostTimeByUserId };

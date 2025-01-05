@@ -67,7 +67,8 @@
         }
 
         const question = {
-            question_title: questionTitle
+            question_title: questionTitle,
+            user: $userUuid
         };
 
         const response = await fetch(`/api/courses/${params.courseId}/questions`, {
@@ -88,25 +89,10 @@
             showErrorAlert = true;
             setTimeout(() => {
                 showErrorAlert = false; // 自动清除错误消息
-            }, 3000); // 5秒后隐藏错误
+            }, 6000); // 5秒后隐藏错误
             return;
         }
-        // if (!response.ok) {
-            // if (response.status === 429) {
-            //     // < 1 min, too many requests
-            //     const errorData = await response.json();
-            //     messageError = errorData.error;
-            // } else {
-            //     // other errors
-            //     messageError = "An error occurred.";
-            // }
-            // setTimeout(() => {
-            //     messageError = null;
-            // }, 5000);
-            // console.log("error: < 1 min");
-        //     messageError = "An error occurred.";
-        //     return;
-        // }
+
 
         // notify success
 

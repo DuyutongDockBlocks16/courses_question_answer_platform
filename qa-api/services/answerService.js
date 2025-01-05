@@ -1,9 +1,9 @@
 import { sql } from "../database/database.js";
 
 
-const insertAnswer = async (question_id, answer_content) => {
+const insertAnswer = async (question_id, answer_content, user_uuid) => {
 
-  const res = await sql`INSERT INTO answers (question_id, answer_content) VALUES (${question_id} , ${answer_content}) RETURNING id`
+  const res = await sql`INSERT INTO answers (question_id, answer_content, user_uuid) VALUES (${question_id} , ${answer_content}, ${user_uuid}) RETURNING id`
 
   return res[0].id;
 };
@@ -59,6 +59,12 @@ const voteAnswerByAnswerId = async (answer_id, user_uuid) => {
   return { vote_count, upvote_id };
 };
 
+const getLastPostTimeByUserId = async (user_uuid) => {
+  const res = await sql`SELECT created_at FROM answers WHERE user_uuid = ${user_uuid} ORDER BY created_at DESC LIMIT 1;`
+  if (res && res.length > 0){
+    return res[0].created_at;
+  }
+  return null;
+};
 
-
-export {  insertAnswer , getAnswersByQuestionId  , voteAnswerByAnswerId};
+export {  insertAnswer , getAnswersByQuestionId  , voteAnswerByAnswerId, getLastPostTimeByUserId};

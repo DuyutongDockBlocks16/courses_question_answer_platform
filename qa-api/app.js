@@ -2,7 +2,10 @@ import { serve } from "./deps.js";
 import * as courseService from "./services/courseService.js";
 import * as questionService from "./services/questionService.js";
 import * as answerService from "./services/answerService.js";
+import * as lastPostService from "./services/lastPostService.js";
 import { cacheMethodCalls } from "./utils/cacheUtil.js";
+
+const OPERATION_TIME_INTERVAL = 60000 // 1 min
 
 const cachedCourseService = cacheMethodCalls(
   courseService, 
@@ -19,6 +22,7 @@ const cachedAnswerService = cacheMethodCalls(
   ["insertAnswer", "voteAnswerByAnswerId"],
 );
 
+
 const getAllCourses = async (request, urlPatternResult) => {
   return Response.json(await cachedCourseService.getCourses())
 };
@@ -33,9 +37,31 @@ const postQuestion = async (request, urlPatternResult) => {
   const requestData = await request.json();
   
   const questionTitle = requestData.question_title;
+  const user_uuid = requestData.user;
   const courseId = urlPatternResult.pathname.groups.courseId;
 
-  const questionId = await cachedQuestionService.insertQuestion(courseId, questionTitle);
+  // check 1 min
+  const last_created = await cachedQuestionService.getLastPostTimeByUserId(user_uuid);
+
+  if (last_created) {
+    const currentTimestamp = Date.now();
+    const timeDifference = currentTimestamp - (new Date(last_created)).getTime();
+
+    // time less than 1 min
+    if (timeDifference < OPERATION_TIME_INTERVAL) {
+      return new Response(
+        JSON.stringify({
+          error: "Hold on! You can post another question in a minute. Thanks for your patience!",
+        }),
+        {
+          status: 429,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  }
+
+  const questionId = await cachedQuestionService.insertQuestion(courseId, questionTitle, user_uuid);
 
   return Response.json({
     questionId: questionId,
@@ -63,9 +89,29 @@ const postAnswer = async (request, urlPatternResult) => {
   const requestData = await request.json();
   
   const answerContent = requestData.answer_content;
+  const user_uuid = requestData.user;
   const questionId = urlPatternResult.pathname.groups.questionId;
 
-  const answerId = await cachedAnswerService.insertAnswer(questionId, answerContent);
+  const last_created = await cachedAnswerService.getLastPostTimeByUserId(user_uuid);
+
+  if (last_created) {
+    const currentTimestamp = Date.now();
+    const timeDifference = currentTimestamp - (new Date(last_created)).getTime();
+
+    if (timeDifference < OPERATION_TIME_INTERVAL) {
+      return new Response(
+        JSON.stringify({
+          error: "Hold on! You can post another answer in a minute. Thanks for your patience!",
+        }),
+        {
+          status: 429,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  }
+
+  const answerId = await cachedAnswerService.insertAnswer(questionId, answerContent, user_uuid);
 
   return Response.json({
     answerId: answerId,
@@ -112,6 +158,8 @@ const fetchLlmAnswers = async (request) => {
 
   let answers = [];
 
+  const user_uuid_for_llm = "llm";
+
   for (let i = 0; i < 3; i++) {
     console.log("Fetching answer ", i + 1);
 
@@ -142,7 +190,8 @@ const fetchLlmAnswers = async (request) => {
     const answer_content = answer;
     await cachedAnswerService.insertAnswer(
       question_id,
-      answer_content
+      answer_content,
+      user_uuid_for_llm
     );
   });
 
